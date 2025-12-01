@@ -7,6 +7,38 @@ enum Direction {
     Right,
 }
 
+fn main() {
+    println!("Part 1 answer: {}", solution1());
+
+    let (landings, crossings) = solution2();
+    println!("Landings: {landings}, Crossings: {crossings}");
+}
+
+fn solution1() -> i32 {
+    let file = File::open("input.txt").unwrap();
+    let reader = BufReader::new(file);
+    let mut curr_position = 50;
+    let mut answer = 0;
+
+    for line in reader.lines() {
+        let line = line.unwrap();
+        let (direction, num) = line.split_at(1);
+        let distance: i32 = num.parse().unwrap();
+        let direction = if direction == "R" {
+            Direction::Right
+        } else {
+            Direction::Left
+        };
+
+        curr_position = movement2(distance, direction, curr_position);
+        if curr_position == 0 {
+            answer += 1;
+        }
+    }
+
+    answer
+}
+
 fn solution2() -> (i32, i32) {
     let file = File::open("input.txt").unwrap();
     let reader = BufReader::new(file);
@@ -17,11 +49,17 @@ fn solution2() -> (i32, i32) {
 
     for line in reader.lines() {
         let line = line.unwrap();
-        if line.is_empty() { continue; }
+        if line.is_empty() {
+            continue;
+        }
 
         let (dir_str, num_str) = line.split_at(1);
         let distance: i32 = num_str.parse().unwrap();
-        let direction = if dir_str == "R" { Direction::Right } else { Direction::Left };
+        let direction = if dir_str == "R" {
+            Direction::Right
+        } else {
+            Direction::Left
+        };
 
         let laps = distance / 100;
         count_crossings += laps;
@@ -61,10 +99,4 @@ fn movement2(distance: i32, direction: Direction, curr_position: i32) -> i32 {
         Direction::Right => distance,
     };
     (curr_position + delta).rem_euclid(size)
-}
-
-fn main() {
-    let (landings, crossings) = solution2();
-    println!("Landings (Part 1): {}", landings);
-    println!("Crossings (Part 2): {}", crossings);
 }
